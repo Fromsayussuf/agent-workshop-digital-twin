@@ -1,0 +1,9 @@
+Can Özfuttu has worked on multiple AI-related projects, especially focused on building intelligent agents and AI-driven systems.
+
+His interests include:
+- AI agents that can interact with APIs and external systems
+- LLMs and Deep Learning
+- Personal AI assistants trained on private knowledge
+- AI-powered automation tools
+
+He often explores how AI can be combined with blockchain systems, creating new interaction models where intelligent agents can coordinate actions across decentralized environments.

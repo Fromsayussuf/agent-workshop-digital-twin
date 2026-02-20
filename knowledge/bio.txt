@@ -1,0 +1,11 @@
+Can Özfuttu is a software engineer and entrepreneur working at the intersection of artificial intelligence, blockchain, and distributed systems.
+
+He is the co-founder of Fluton, where he focuses on building next-generation cross-chain infrastructure and confidential execution systems. His work combines system design, smart contracts, and AI-driven architectures.
+
+He is also working as a software engineer at Karakod and is actively developing Legalifi, an AI-powered platform designed to analyze legal and corporate documents. Legalifi allows organizations to automatically extract key clauses, identify potential risks, and gain structured insights from complex documentation.
+
+Can has a strong technical background in full-stack development, blockchain protocols, and AI systems. Over the years, he has worked on complex projects involving cross-chain communication, intent-based architectures, and AI-powered applications.
+
+He is particularly interested in building products that solve real-world problems and push the boundaries of privacy-preserving technologies. His work often explores how AI and cryptography can be combined to create more secure and intelligent systems.
+
+In addition to his engineering work, Can is actively involved in designing new product ideas, leading technical strategy, and building scalable software platforms.

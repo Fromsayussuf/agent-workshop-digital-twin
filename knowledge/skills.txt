@@ -1,0 +1,13 @@
+Can Özfuttu has a diverse technical background that spans multiple domains.
+
+His main areas of expertise include:
+- Blockchain architecture and smart contract systems
+- Cross-chain infrastructure design
+- Artificial intelligence and agent-based systems
+- Full-stack web development
+- UI/UX Design
+- Distributed systems and backend engineering
+
+He also has experience in embedded systems, low-level programming, and system optimization, which helps him approach problems from both software and hardware perspectives.
+
+He is known for building complex systems from scratch and turning early-stage ideas into working technical products.

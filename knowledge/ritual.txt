@@ -1,0 +1,5 @@
+Ritual Foundation is an independent organization focused on supporting the development, growth, and decentralization of the Ritual Chain — a next-generation blockchain ecosystem designed to integrate decentralized artificial intelligence (AI) with blockchain technology.
+
+It serves as the primary steward and supporter of the Ritual Chain and its broader ecosystem, working to provide technical, financial, and operational resources to builders and projects within that space. Unlike traditional passive grant-giving foundations, Ritual Foundation aims to be hands-on, helping incubate, prototype, build, and accelerate products and infrastructure that leverage Ritual’s technology. Its mission includes fostering decentralized AI infrastructure — bridging blockchain with scalable, censorship-resistant, and verifiable AI systems.
+
+Ritual Foundation’s goal is to accelerate innovation where AI and blockchain intersect, moving beyond traditional crypto or centralized AI platforms by enabling decentralized, open, and verifiable compute directly on chain.

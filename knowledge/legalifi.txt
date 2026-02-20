@@ -1,0 +1,5 @@
+Legalifi is an AI-powered platform designed to analyze legal and corporate documents to help organizations better understand risks, compliance gaps, and important insights.
+
+The platform focuses on processing structured and unstructured documents and using AI to extract meaningful information. It aims to support companies, legal teams, and compliance departments by automating parts of document review and analysis.
+
+Can Özfuttu is involved in the design and development of Legalifi's technical infrastructure, particularly around AI-based document understanding and system architecture. His work includes building scalable backends and integrating intelligent analysis pipelines.
