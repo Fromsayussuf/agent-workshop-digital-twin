@@ -2,3 +2,5 @@ streamlit
 openai
 chromadb
 dotenv
+openai-agents
+requests
