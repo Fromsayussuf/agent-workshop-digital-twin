@@ -3,6 +3,7 @@ from openai import OpenAI
 from agents import Agent, Runner, function_tool
 
 import os
+import csv
 import chromadb
 import streamlit as st
 import smtplib
@@ -12,20 +13,25 @@ from datetime import datetime, timedelta, timezone
 
 load_dotenv()
 
-client = OpenAI()
+# --- OpenRouter Setup ---
+os.environ["OPENAI_API_KEY"] = os.getenv("OPENROUTER_API_KEY")
+os.environ["OPENAI_BASE_URL"] = "https://openrouter.ai/api/v1"
+
+client = OpenAI(
+    base_url="https://openrouter.ai/api/v1",
+    api_key=os.environ.get("OPENAI_API_KEY")
+)
 
 # -------------------------
-# RAG PART (mostly same as before)
+# RAG PART
 # -------------------------
 
 def load_documents():
     docs = []
     folder = "knowledge"
-
     for file in os.listdir(folder):
         with open(os.path.join(folder, file), "r", encoding="utf-8") as f:
             docs.append(f.read())
-
     return docs
 
 def chunk_text(text, size=500):
@@ -33,7 +39,7 @@ def chunk_text(text, size=500):
 
 def get_embedding(text):
     response = client.embeddings.create(
-        model="text-embedding-3-small",
+        model="openai/text-embedding-3-small",
         input=text
     )
     return response.data[0].embedding
@@ -45,7 +51,6 @@ docs = load_documents()
 
 for doc_index, doc in enumerate(docs):
     chunks = chunk_text(doc)
-
     for i, chunk in enumerate(chunks):
         collection.add(
             documents=[chunk],
@@ -55,16 +60,14 @@ for doc_index, doc in enumerate(docs):
 
 def retrieve_context(question):
     embedding = get_embedding(question)
-
     results = collection.query(
         query_embeddings=[embedding],
         n_results=3
     )
-
     return "\n".join(results["documents"][0])
 
 # -------------------------
-# HELPERS
+# CALENDLY HELPERS
 # -------------------------
 
 def calendly_headers():
@@ -86,24 +89,41 @@ def get_calendly_user_uri():
 
 def get_calendly_event_type_uri():
     user_uri = get_calendly_user_uri()
-
     res = requests.get(
         "https://api.calendly.com/event_types",
         headers=calendly_headers(),
         params={"user": user_uri},
         timeout=15
     )
-
     collection = res.json().get("collection", [])
-
     return collection[0]["uri"]
 
 def format_slot_for_humans(iso_str: str):
     dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
     return dt.strftime("%A %d %B %Y %H:%M UTC")
 
+
+@function_tool
+def save_contact(name: str, company: str, intent: str):
+    """Save extracted contact information to contacts.csv"""
+    try:
+        filename = "contacts.csv"
+        file_exists = os.path.exists(filename)
+        
+        with open(filename, "a", newline="", encoding="utf-8") as f:
+            writer = csv.writer(f)
+            if not file_exists:
+                writer.writerow(["timestamp", "name", "company", "intent"])
+            
+            timestamp = datetime.now().isoformat()
+            writer.writerow([timestamp, name.strip(), company.strip(), intent.strip()])
+        
+        return f"Contact saved: {name} from {company} — Intent: {intent}"
+    except Exception as e:
+        return f"Failed to save contact: {str(e)}"
+
 # -------------------------
-# TOOLS
+# OTHER TOOLS
 # -------------------------
 
 @function_tool
@@ -155,7 +175,7 @@ def get_available_slots(days_ahead: int = 7):
     try:
         event_type_uri = get_calendly_event_type_uri()
 
-        start = datetime.now(timezone.utc) + timedelta(hours=2)  # Start from 2 hours in the future to avoid immediate slots
+        start = datetime.now(timezone.utc) + timedelta(hours=2)
         end = start + timedelta(days=days_ahead)
 
         res = requests.get(
@@ -204,7 +224,6 @@ def book_meeting(name: str, email: str, slot: str, topic: str = ""):
             },
         }
 
-        # Optional questions/notes field if you want topic included in booking context
         if topic:
             payload["questions_and_answers"] = [
                 {
@@ -220,15 +239,11 @@ def book_meeting(name: str, email: str, slot: str, topic: str = ""):
             json=payload,
             timeout=20
         )
-        print("Calendly booking response:", res.status_code, res.text)
 
         data = res.json()["resource"]
         start_time = data.get("start_time", slot)
 
-        return (
-            f"Meeting booked successfully for {name} at "
-            f"{format_slot_for_humans(start_time)}."
-        )
+        return f"Meeting booked successfully for {name} at {format_slot_for_humans(start_time)}."
 
     except Exception as e:
         print(f"Error booking Calendly meeting: {str(e)}")
@@ -240,33 +255,33 @@ def book_meeting(name: str, email: str, slot: str, topic: str = ""):
 
 agent = Agent(
     name="Can's Digital Twin",
-    model="gpt-5.4-mini",
+    model="openai/gpt-4o-mini",
     instructions="""
 You are the AI digital twin of Can Özfuttu.
 
-Rules:
-1. When the user asks a question about Can, first use search_knowledge.
-2. Answer using ONLY the retrieved context.
-3. If the context is not enough, say you don't know and use notify_owner tool. Do not ask if the user wants you to notify - just do it and call the tool. This will help Can improve the twin over time.
-4. If the user wants to schedule a meeting, use get_available_slots first.
-5. Only use book_meeting when you have:
-   - the person's name
-   - the person's email
-   - a clearly chosen slot in exact ISO format
-6. When showing availability, prefer giving the user the exact slot values returned by the tool.
-7. Be concise and professional.
+Core Rules:
+1. When the user asks a question about Can, first use search_knowledge tool. Answer using ONLY the retrieved context.
+2. If the context is not enough, say you don't know and use notify_owner tool. Do not ask the user — just call it.
+3. For scheduling: Use get_available_slots first. Only use book_meeting when you have name, email, and exact ISO slot.
+4. Be concise, natural, and professional at all times.
+
+Contact Extraction Rules:
+- If the user clearly introduces themselves (examples: "Hi, I’m John from Google, we’re hiring...", "I'm a recruiter from Acme...", "Hey, I’m a founder at a startup looking to collaborate..."), extract name, company, and intent, then call the save_contact tool.
+- Only trigger save_contact when you are reasonably confident it's a genuine self-introduction with enough details.
+- Do NOT trigger on casual or vague mentions like "I work at Google", "Google is great", "I’m from Acme", or general questions.
+- NEVER mention words like "contact extraction", "tool", "saving contact", or any internal logic to the user.
+- When you decide not to save any contact, reply in a completely natural and professional way without any meta-commentary.
+- After successfully saving a contact, you can give a short, natural acknowledgment like "Thanks for the introduction!" or "Noted, nice to meet you!".
 """,
     tools=[
         search_knowledge,
         notify_owner,
         get_available_slots,
         book_meeting,
+        save_contact,
     ],
 )
 
-# -------------------------
-# UI
-# -------------------------
 
 st.title("Can's Digital Twin")
 

@@ -1,119 +1,39 @@
-# 🧠 Digital Twin AI Agent
+# Can's Digital Twin
 
-A minimal Retrieval-Augmented Generation (RAG) system that builds a “Digital Twin” capable of professionally representing a person and answering questions about their work without hallucinating.
+An AI agent that acts as Can Özfuttu's digital twin with RAG knowledge base, Calendly integration, and automatic contact extraction.
 
-This project demonstrates how to architect an AI agent using structured knowledge, semantic embeddings, vector search, and controlled generation — rather than relying on prompt stuffing.
+## Features
+- Answers questions about Can using knowledge base
+- Schedules meetings via Calendly
+- Automatically detects self-introductions and saves contact info to CSV
+- Notifies owner for unknown questions
 
----
+## Contact Extraction Feature
 
-## 🏗 Architecture
+The agent intelligently detects when users introduce themselves and saves their details.
 
-The system consists of four core layers:
+### Example 1: Hiring Introduction
+![Contact Extraction Example 1](screenshots/example1.png)
 
-### 1️⃣ Knowledge Layer
+### Example 2: Collaboration Introduction
+![Contact Extraction Example 2](screenshots/example2.png)
 
-Structured documents:
-- `bio.txt`
-- `fluton.txt`
-- `legalifi.txt`
-- `skills.txt`
-- `contact.txt`
+### Saved Contacts (contacts.csv)
+![Contact Extraction Example 3](screenshots/example3.png)
 
-Documents are split into semantically meaningful chunks before embedding.
+## Setup
+1. Clone the repo
+2. `pip install -r requirements.txt`
+3. Add your `.env` variables (OpenRouter, Calendly, etc.)
+4. Run `streamlit run app.py`
 
+### Current Blocker: Calendly Booking Issue
+I am currently encountering a critical issue with the automated booking tool. While the knowledge search and notification tools are functional, the book meeting function is failing during execution.
 
-### 2️⃣ Embedding & Memory Layer
-
-- Each chunk is converted into a contextual embedding  
-- Embeddings are indexed using **ChromaDB**  
-- The vector database acts as the agent’s memory  
-
-### 3️⃣ Retrieval Layer
-
-When a query is received:
-
-- The query is embedded  
-- Similarity search retrieves the most relevant chunks  
-- Only top-k relevant context is selected  
-
-### 4️⃣ Generation Layer
-
-The LLM receives:
-
-- A strict system prompt (persona + constraints)  
-- The retrieved context  
-- The user question  
-
-The model is explicitly instructed to:
-
-- Use only provided context  
-- Avoid hallucinating  
-- Respond professionally and concisely  
-
----
-
-## 🛠 Tech Stack
-
-- Python 3.10+
-- OpenAI API
-- ChromaDB
-- Streamlit
-
----
-
-## ⚙️ Installation
-
-### 1️⃣ Clone the repository
-
-```bash
-git clone https://github.com/yourusername/digital-twin-agent.git
-cd digital-twin-agent
-```
-
-### 2️⃣ Create a virtual environment
-
-#### macOS / Linux
-
-```bash
-python3 -m venv venv
-source venv/bin/activate
-```
-
-#### Windows
-
-```bash
-python -m venv venv
-venv\Scripts\activate
-```
-
-### 3️⃣ Install dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4️⃣ Set your OpenAI API key
-
-#### macOS / Linux
-
-```bash
-export OPENAI_API_KEY=your_key_here
-```
-
-#### Windows
-
-```bash
-setx OPENAI_API_KEY "your_key_here"
-```
-
-### 5️⃣ Run the App
-
-```bash
-python -m streamlit run app.py
-```
-
----
-
-## 🤝 Acknowledgment
-
-This project was originally built live during a 90-minute workshop focused on designing reliable AI agents using RAG architecture principles. You can watch the workshop [here](https://x.com/elifhilalumucu/status/2024907344325362057)
+### Screenshots
+![Calendly Booking Issue](screenshots/MeetUp1.png)
+![Calendly Booking Issue](screenshots/MeetUp2.png)
+![Calendly Booking Issue](screenshots/MeetUp3.png)
+![Calendly Booking Issue](screenshots/MeetUp4.png)
+![Notification From PushOver](screenshots/BookingFailed.jpg)
+![Notification From PushOver](screenshots/BookingFailed2.jpg)
