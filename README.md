@@ -13,13 +13,13 @@ An AI agent that acts as Can Özfuttu's digital twin with RAG knowledge base, Ca
 The agent intelligently detects when users introduce themselves and saves their details.
 
 ### Example 1: Hiring Introduction
-![Contact Extraction Example 1](screenshots/example1.png)
+![Contact Extraction Example 1](screenshots/Example1.png)
 
 ### Example 2: Collaboration Introduction
-![Contact Extraction Example 2](screenshots/example2.png)
+![Contact Extraction Example 2](screenshots/Example2.png)
 
 ### Saved Contacts (contacts.csv)
-![Contact Extraction Example 3](screenshots/example3.png)
+![Contact Extraction Example 3](screenshots/Example3.png)
 
 ## Setup
 1. Clone the repo
